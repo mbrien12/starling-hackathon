@@ -28,16 +28,18 @@ log = require('node-wit').log;
 const PORT = process.env.PORT || 8445;
 
 // Wit.ai parameters
-const XA5CM46GD6ZLW3IXFAFCJ42ZJRAF3QA4 = process.env.XA5CM46GD6ZLW3IXFAFCJ42ZJRAF3QA4;
+const WIT_TOKEN = process.env.WIT_TOKEN;
 
+//weather API
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
 // Messenger API parameters
-const EAAEE8bsLMaABAHZAPjSG0ols6cNPj0BeprzcZBAHE94dbH6EHmETgcS2HMchIHFZCfJPyMPHiyInwmgyW4QdTAoxllReX03kfvxlPLR6GJaqLABu3skFTw8OIOIwRsW8DHHVfNYXLWi9y1eyAjem9bo6ZAQDEKlVYWgfED1xBQZDZD = process.env.EAAEE8bsLMaABAHZAPjSG0ols6cNPj0BeprzcZBAHE94dbH6EHmETgcS2HMchIHFZCfJPyMPHiyInwmgyW4QdTAoxllReX03kfvxlPLR6GJaqLABu3skFTw8OIOIwRsW8DHHVfNYXLWi9y1eyAjem9bo6ZAQDEKlVYWgfED1xBQZDZD;
-if (!EAAEE8bsLMaABAHZAPjSG0ols6cNPj0BeprzcZBAHE94dbH6EHmETgcS2HMchIHFZCfJPyMPHiyInwmgyW4QdTAoxllReX03kfvxlPLR6GJaqLABu3skFTw8OIOIwRsW8DHHVfNYXLWi9y1eyAjem9bo6ZAQDEKlVYWgfED1xBQZDZD) { throw new Error('missing FB_PAGE_TOKEN') }
-const c8f8d5cc61378b14000dbb391405ecd8 = process.c8f8d5cc61378b14000dbb391405ecd8;
-if (!c8f8d5cc61378b14000dbb391405ecd8) { throw new Error('missing FB_APP_SECRET') }
+const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
+if (!FB_PAGE_TOKEN) { throw new Error('missing FB_PAGE_TOKEN') }
+const FB_APP_SECRET = process.env.FB_APP_SECRET;
+if (!FB_APP_SECRET) { throw new Error('missing FB_APP_SECRET') }
 
-let starling_chatbot = process.env.FB_starling_chatbot;
+let FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
 // crypto.randomBytes(8, (err, buff) => {
 //   if (err) throw err;
 //   FB_VERIFY_TOKEN = buff.toString('hex');
@@ -55,7 +57,7 @@ const fbMessage = (id, text) => {
     recipient: { id },
     message: { text },
   });
-  const qs = 'access_token=' + encodeURIComponent(EAAEE8bsLMaABAHZAPjSG0ols6cNPj0BeprzcZBAHE94dbH6EHmETgcS2HMchIHFZCfJPyMPHiyInwmgyW4QdTAoxllReX03kfvxlPLR6GJaqLABu3skFTw8OIOIwRsW8DHHVfNYXLWi9y1eyAjem9bo6ZAQDEKlVYWgfED1xBQZDZD);
+  const qs = 'access_token=' + encodeURIComponent(FB_PAGE_TOKEN);
   return fetch('https://graph.facebook.com/me/messages?' + qs, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -136,6 +138,8 @@ const actions = {
   },
   // You should implement your custom actions here
   // See https://wit.ai/docs/quickstart
+// You should implement your custom actions here
+  // See https://wit.ai/docs/quickstart
   getBalance({context, entities}) {
     
       context.balance = '£5 '; // we should call a weather API here
@@ -155,7 +159,7 @@ const actions = {
 
 // Setting up our bot
 const wit = new Wit({
-  accessToken: XA5CM46GD6ZLW3IXFAFCJ42ZJRAF3QA4,
+  accessToken: WIT_TOKEN,
   actions,
   logger: new log.Logger(log.INFO)
 });
@@ -173,7 +177,7 @@ app.use(bodyParser.json({ verify: verifyRequestSignature }));
 // Webhook setup
 app.get('/webhook', (req, res) => {
   if (req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === 'starling_chatbot') {
+    req.query['hub.verify_token'] === FB_VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
   } else {
     res.sendStatus(400);
@@ -264,7 +268,7 @@ function verifyRequestSignature(req, res, buf) {
     var method = elements[0];
     var signatureHash = elements[1];
 
-    var expectedHash = crypto.createHmac('sha1', c8f8d5cc61378b14000dbb391405ecd8)
+    var expectedHash = crypto.createHmac('sha1', FB_APP_SECRET)
                         .update(buf)
                         .digest('hex');
 
