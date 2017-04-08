@@ -1,4 +1,4 @@
-#Starling Hackathon - April 2017
+# Starling Hackathon - April 2017
 
 Team Shell, Jo, Charlene and Funmi
 
