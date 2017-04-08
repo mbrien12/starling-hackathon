@@ -30,8 +30,6 @@ const PORT = process.env.PORT || 8445;
 
 // Wit.ai parameters
 const WIT_TOKEN = process.env.WIT_TOKEN;
-
-//Starling API
 const STARLING_ACCESS_TOKEN = process.env.STARLING_ACCESS_TOKEN;
 
 // Messenger API parameters
@@ -140,41 +138,26 @@ const actions = {
   // You should implement your custom actions here
   // See https://wit.ai/docs/quickstart
   getBalance({context, entities}) {
-    return callAPI("get", "accounts/balance").then((body) => {
-      console.log(body.clearedBalance);
-      context.balance = "£" + body.clearedBalance;
-      console.log(context.balance);
-      return context;
-    });
-  },
-   getAccount({context, entities}) {
-    return callAPI("get", "accounts").then((body) => {
-    context.account =  + body.number + " and your sort code is " + body.sortCode;
-    return context;
-  });
+   return callAPI("get", "accounts/balance").then((body) => {
+     context.balance = "£" + body.clearedBalance;
+     return context;
+   });
+ },
+ getContacts({context, entities}) {
+  var d = '';
+  return callAPI("get", "contacts").then((body) => {
+     for (var i = 0; i<body._embedded.contacts.length; i++) {
+       var c = body._embedded.contacts[i];
+       d = d+c.name+"\n"
+     }
+     context.contacts = d;
+     return context;
+   });
   },
 };
 
+// contacts
 
-
-function callAPI(method, name){
-  var options = {
-    method: method,
-    uri: 'https://api-sandbox.starlingbank.com/api/v1/' + name,
-    json: true,
-    auth: {
-      'bearer': STARLING_ACCESS_TOKEN
-    }
-  }
-
-  return rp(options)
-    .then((body) => {
-      return body;
-    })
-    .catch((err) => {
-      console.log(err)
-    });
-}
 
 // Setting up our bot
 const wit = new Wit({
@@ -299,3 +282,22 @@ function verifyRequestSignature(req, res, buf) {
 
 app.listen(PORT);
 console.log('Listening on :' + PORT + '...');
+
+function callAPI(method, name){
+  var options = {
+    method: method,
+    uri: 'https://api-sandbox.starlingbank.com/api/v1/' + name,
+    json: true,
+    auth: {
+      'bearer': STARLING_ACCESS_TOKEN
+    }
+  }
+
+  return rp(options)
+    .then((body) => {
+      return body;
+    })
+    .catch((err) => {
+      console.log(err)
+    });
+}
