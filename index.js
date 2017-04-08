@@ -147,9 +147,9 @@ const actions = {
       return context;
     });
   },
-    getsort_Code({context, entities}) {
+   getAccount({context, entities}) {
     return callAPI("get", "accounts").then((body) => {
-    context.sort_Code = "Your sortcode is " + body.sortCode;
+    context.account =  + body.number + " and your sort code is " + body.sortCode;
     return context;
   });
   },
