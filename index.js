@@ -147,7 +147,15 @@ const actions = {
       return context;
     });
   },
+    getsort_Code({context, entities}) {
+    return callAPI("get", "accounts").then((body) => {
+    context.sort_Code = "Your sortcode is " + body.sortCode;
+    return context;
+  });
+  },
 };
+
+
 
 function callAPI(method, name){
   var options = {
