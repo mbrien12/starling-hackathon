@@ -19,6 +19,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 const request = require('request');
 const rp = require('request-promise');
+const moment = require('moment');
 
 let Wit = null;
 let log = null;
@@ -154,6 +155,26 @@ const actions = {
      return context;
    });
   },
+  getExpenditure({context, entities}) {
+    var datetime = firstEntityValue(entities, 'datetime');
+    var from = moment.utc(datetime + "").format("YYYY-MM-DD");
+    var params = {
+      to: from,
+      from: from
+    }
+    var currentAmount = 0;
+    return callAPI("get", "transactions", params).then((body) => {
+      for(var i = 0; i < body._embedded.transactions.length; i++){
+        var t = body._embedded.transactions[i];
+        if(t.amount < 0){
+          currentAmount = currentAmount + t.amount;
+        }
+      }
+      currentAmount = currentAmount * -1;
+      context.expenditure = "£" + parseFloat(currentAmount).toFixed(2);
+      return context;
+    });
+  },
 };
 
 // contacts
@@ -283,14 +304,15 @@ function verifyRequestSignature(req, res, buf) {
 app.listen(PORT);
 console.log('Listening on :' + PORT + '...');
 
-function callAPI(method, name){
+function callAPI(method, name, data){
   var options = {
     method: method,
     uri: 'https://api-sandbox.starlingbank.com/api/v1/' + name,
     json: true,
     auth: {
       'bearer': STARLING_ACCESS_TOKEN
-    }
+    },
+    qs: data
   }
 
   return rp(options)
