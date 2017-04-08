@@ -1,6 +1,6 @@
 # Starling Hackathon - April 2017
 
-Team Shell, Jo, Charlene and Funmi
+Team: Shell, Jo, Charlene and Funmi
 
 ## We made...
 
