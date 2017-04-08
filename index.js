@@ -37,7 +37,7 @@ if (!EAAEE8bsLMaABAHZAPjSG0ols6cNPj0BeprzcZBAHE94dbH6EHmETgcS2HMchIHFZCfJPyMPHiy
 const c8f8d5cc61378b14000dbb391405ecd8 = process.c8f8d5cc61378b14000dbb391405ecd8;
 if (!c8f8d5cc61378b14000dbb391405ecd8) { throw new Error('missing FB_APP_SECRET') }
 
-let FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
+let starling_chatbot = process.env.FB_starling_chatbot;
 // crypto.randomBytes(8, (err, buff) => {
 //   if (err) throw err;
 //   FB_VERIFY_TOKEN = buff.toString('hex');
@@ -173,7 +173,7 @@ app.use(bodyParser.json({ verify: verifyRequestSignature }));
 // Webhook setup
 app.get('/webhook', (req, res) => {
   if (req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === FB_VERIFY_TOKEN) {
+    req.query['hub.verify_token'] === starling_chatbot) {
     res.send(req.query['hub.challenge']);
   } else {
     res.sendStatus(400);
