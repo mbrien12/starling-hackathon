@@ -173,7 +173,7 @@ app.use(bodyParser.json({ verify: verifyRequestSignature }));
 // Webhook setup
 app.get('/webhook', (req, res) => {
   if (req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === starling_chatbot) {
+    req.query['hub.verify_token'] === 'starling_chatbot') {
     res.send(req.query['hub.challenge']);
   } else {
     res.sendStatus(400);
