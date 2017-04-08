@@ -18,6 +18,7 @@ const crypto = require('crypto');
 const express = require('express');
 const fetch = require('node-fetch');
 const request = require('request');
+const rp = require('request-promise');
 
 let Wit = null;
 let log = null;
@@ -30,8 +31,8 @@ const PORT = process.env.PORT || 8445;
 // Wit.ai parameters
 const WIT_TOKEN = process.env.WIT_TOKEN;
 
-//weather API
-const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+//Starling API
+const STARLING_ACCESS_TOKEN = process.env.STARLING_ACCESS_TOKEN;
 
 // Messenger API parameters
 const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
@@ -138,24 +139,34 @@ const actions = {
   },
   // You should implement your custom actions here
   // See https://wit.ai/docs/quickstart
-// You should implement your custom actions here
-  // See https://wit.ai/docs/quickstart
   getBalance({context, entities}) {
-    
-      context.balance = '£5 '; // we should call a weather API here
-    
-    return context;
+    return callAPI("get", "accounts/balance").then((body) => {
+      console.log(body.clearedBalance);
+      context.balance = "£" + body.clearedBalance;
+      console.log(context.balance);
+      return context;
+    });
   },
 };
 
-      delete context.missingLocation;
-    } else {
-      context.missingLocation = true;
-      delete context.forecast;
+function callAPI(method, name){
+  var options = {
+    method: method,
+    uri: 'https://api-sandbox.starlingbank.com/api/v1/' + name,
+    json: true,
+    auth: {
+      'bearer': STARLING_ACCESS_TOKEN
     }
-    return context;
   }
-};
+
+  return rp(options)
+    .then((body) => {
+      return body;
+    })
+    .catch((err) => {
+      console.log(err)
+    });
+}
 
 // Setting up our bot
 const wit = new Wit({
