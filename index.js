@@ -198,6 +198,20 @@ const actions = {
     context.greeting = greetings[rand];
     return context;
   },
+  getGoodbye({context, entities}){
+    var goodbyes = [
+      "Goodbye",
+      "See you",
+      "See you soon!",
+      "Have a nice day!",
+      "Chat to you later",
+      "Bye!"
+    ];
+    var rand = getRandomIntInclusive(0, goodbyes.length-1);
+    console.log(rand);
+    context.goodbye = goodbyes[rand];
+    return context;
+  },
 };
 
 // contacts
