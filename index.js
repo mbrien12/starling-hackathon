@@ -109,6 +109,11 @@ const firstEntityValue = (entities, entity) => {
   return typeof val === 'object' ? val.value : val;
 };
 
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 // Our bot actions
 const actions = {
@@ -175,13 +180,24 @@ const actions = {
       return context;
     });
   },
-    getAccount({context, entities}) {
+  getAccount({context, entities}) {
     return callAPI("get", "accounts").then((body) => {
-    context.account =  + body.number + " and your sort code is " + body.sortCode;
-    return context;
-  });
+      context.account =  + body.number + " and your sort code is " + body.sortCode;
+      return context;
+    });
   },
-  
+  getGreeting({context, entities}){
+    var greetings = [
+      "Hey! How can I help you today?",
+      "Hi! What can I do for you today?",
+      "Hello! Do you need to know your balance today?",
+      "Hello! What can I do for you today?",
+      "Hi! How can I help you today?"
+    ];
+    var rand = getRandomIntInclusive(0, greetings.length-1);
+    context.greeting = greetings[rand];
+    return context;
+  },
 };
 
 // contacts
