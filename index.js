@@ -155,7 +155,6 @@ const actions = {
      return context;
    });
   },
-  
   getExpenditure({context, entities}) {
     var datetime = firstEntityValue(entities, 'datetime');
     var from = moment.utc(datetime + "").format("YYYY-MM-DD");
@@ -176,15 +175,14 @@ const actions = {
       return context;
     });
   },
-};
-  getAccount({context, entities}) {
+    getAccount({context, entities}) {
     return callAPI("get", "accounts").then((body) => {
     context.account =  + body.number + " and your sort code is " + body.sortCode;
     return context;
   });
   },
+  
 };
-
 
 // contacts
 
