@@ -175,6 +175,13 @@ const actions = {
       return context;
     });
   },
+    getAccount({context, entities}) {
+    return callAPI("get", "accounts").then((body) => {
+    context.account =  + body.number + " and your sort code is " + body.sortCode;
+    return context;
+  });
+  },
+  
 };
 
 // contacts
